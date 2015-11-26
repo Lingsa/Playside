@@ -8,9 +8,10 @@
 	 //slideTime:4500
  //});
 */
-;(function(playslide){
-function  playSlide(x,arglist){
-	if (x==null) throw TypeError();
+
+function PlaySlide(x,arglist){
+	'use strict';
+	if (x===null || x===undefined) throw TypeError();
 	var oPrarent=x;
 	obj=getElementsByClassName("slideMain",oPrarent)[0];
       
@@ -37,12 +38,10 @@ function  playSlide(x,arglist){
 	//当前对象特有的className正则表达式
 	reExp=new RegExp(/\bactive\b/gi);
 
-	//所有对象集合数组
-
 	//获取滚动图片的数量
 	(function(){
 		var slideNode=obj.childNodes;
-		for (var i=0,n=slideNode.length; i<n; i++) {
+		for (var i=0; i<slideNode.length; i++) {
 			if (slideNode[i].nodeType==1) {
 				objItem.push(slideNode[i]);
 			}
@@ -59,7 +58,7 @@ function  playSlide(x,arglist){
 				pageItems=undefined;
 			} else {
 				var subObj=getElementsByClassName('slideNav',oPrarent)[0].childNodes;
-				for (var i=0,n=subObj.length; i<n; i++){
+				for (var i=0; i<subObj.length; i++){
 					if (subObj[i].nodeType==1) {
 						pageItems.push(subObj[i]);
 					}
@@ -83,10 +82,8 @@ function  playSlide(x,arglist){
 		while (n--) {
 			removeClass(objItem[n],reExp);
 			if (pageItem!=undefined) removeClass(pageItem[n],reExp);
-		}
-	
+		}		
 		turnPage();
-
 		objItem[args.curSlide].className+='active';
 		if (pageItem!=undefined) pageItem[args.curSlide].className+='active';
 		args["initSlide"]=setInterval(function(){
@@ -122,15 +119,11 @@ function  playSlide(x,arglist){
 		//显示图片是头部
 		if (args["curSlide"]==0) {
 			removeClass(objItem[args["curSlide"]],reExp);
-			args["curSlide"]=objItem.length;
-			
-			objItem[--args["curSlide"]].className+='active';
-			
-		}else if (args["curSlide"]<objItem.length && args["curSlide"]>0) {
-			
+			args["curSlide"]=objItem.length;				
+			objItem[--args["curSlide"]].className+='active';				
+		}else if (args["curSlide"]<objItem.length && args["curSlide"]>0) {				
 			removeClass(objItem[args["curSlide"]],reExp);
-			objItem[--args["curSlide"]].className+='active';
-			
+			objItem[--args["curSlide"]].className+='active';				
 		}
 		lightPage();
 	}
@@ -139,7 +132,7 @@ function  playSlide(x,arglist){
 	function turnPage(){
 		if(+args["showPage"]==0) return;
 		if (pageItem!=undefined) {
-			for (var i=0,n=pageItem.length; i<n; i++) {
+			for (var i=0; i<pageItem.length; i++) {
 				(function(i){
 					this.onclick=function(){
 						if(i!=args["curSlide"]){
@@ -159,16 +152,14 @@ function  playSlide(x,arglist){
 	//当前页码标亮
 	function lightPage(){
 		if (pageItem!=undefined) {
-			for (var i=0,n=pageItem.length; i<n; i++) {
+			for (var i=0; i<pageItem.length; i++) {
 				if (/\bactive\b/.test(pageItem[i].className) && (args["curSlide"]!=i)) {
 					pageItem[i].className=pageItem[i].className.replace(/\bactive\b/,"");
 					break;
 				}
-
 			}
 			pageItem[args["curSlide"]].className+='active';
-		}
-          		
+		}	          		
 	}
 	init();
 	return {
@@ -177,4 +168,4 @@ function  playSlide(x,arglist){
 		prevPage:prev
 	}
 };
-})(window.playslide);
+
