@@ -14,8 +14,8 @@
         if(!(this instanceof Playslide)) return new Playslide(x,arglist);
         //quit if no root element
         if(!x) return;
-        var oPrarent=x, obj, objX, objY, objItem, args, reExp, pageItem, length;
-        obj=getElementsByClassName("slideMain",oPrarent)[0];
+        var oParent=x, obj, objX, objY, objItem, args, reExp, pageItem, length;
+        obj=getElementsByClassName("slideMain",oParent)[0];
 
         //活动屏幕尺寸
         objX=obj.clientWidth;
@@ -29,47 +29,9 @@
             slideType:"" ,    //更换效果
             showPage:true     //是否显示页码
         };
-        if(arguments.length>=2){
-            var argValid=arguments[1];
-            for(var validNum in argValid){
-                if(args.hasOwnProperty(validNum)){
-                    args[validNum]=argValid[validNum];
-                }
-            }
-            argValid=null;
-        }
 
         //当前对象特有的className正则表达式
         reExp=new RegExp(/\bactive\b/gi);
-
-        //所有对象集合数组
-        //获取滚动图片的数量
-        (function(exports){
-            var slideNode=obj.childNodes;
-            for(var i=0;i<slideNode.length;i++){
-                if(slideNode[i].nodeType===1){
-                    exports.push(slideNode[i]);
-                }
-            }
-        })(objItem=[]);
-        length=objItem.length;
-        if(length<2) args["showPage"]=false; 
-
-        //所有对象索引按钮集合数组
-        pageItem=[objItem.length];
-        if(+args["showPage"]==1){
-            
-            (function(){
-                var pageItems=[];
-                var subObj=getElementsByClassName('slideNav',oPrarent)[0].childNodes;
-                for(var i=0;i<subObj.length;i++){
-                    if(subObj[i].nodeType==1){
-                        pageItems.push(subObj[i]);
-                    }
-                }
-                pageItem=pageItems;
-            })();
-        }
 
         /*更换效果
         switch args["slideType"]{
@@ -78,7 +40,45 @@
         }
         */
         //初始化默认滚动
-        function init(){            
+        function init(){ 
+            if(arguments.length>=2){
+                var argValid=arguments[1];
+                for(var validNum in argValid){
+                    if(args.hasOwnProperty(validNum)){
+                        args[validNum]=argValid[validNum];
+                    }
+                }
+                argValid=null;
+            }
+            //所有对象集合数组
+            //获取滚动图片的数量
+            (function(exports){
+                var slideNode=obj.childNodes;
+                for(var i=0;i<slideNode.length;i++){
+                    if(slideNode[i].nodeType===1){
+                        exports.push(slideNode[i]);
+                    }
+                }
+            })(objItem=[]);
+            length=objItem.length;
+            if(length<2) args["showPage"]=false; 
+
+            //所有对象索引按钮集合数组
+            pageItem=[objItem.length];
+            if(+args["showPage"]==1){               
+                pageItem=[objItem.length];               
+                var ulr=creatElement("ul","slideNav move_nav");           
+                for(var i=0;i<objItem.length;i++){
+                    var lir=creatElement("li");
+                    var li_child=creatElement("a","dot");
+                    li_child.setAttribute("href","javascript:;");
+                    li_child.innerHTML=i+1;
+                    lir.appendChild(li_child);                             
+                    ulr.appendChild(lir);
+                    pageItem[i]=lir;
+                }
+                oParent.appendChild(ulr);
+            }           
             var n=objItem.length;
             while(n--){
                 removeClass(objItem[n],reExp);
@@ -167,7 +167,6 @@
         }
         init();
         return{
-            init:init,
             nextPage:next,
             prevPage:prev
         }
@@ -238,4 +237,11 @@ function removeClass(e,exp){
     var stre=e.className.toString();
     e.className=stre.replace(exp,"");
   }
+}
+function creatElement(eletype,eleclass){
+    var elem=document.createElement(eletype);
+    if(arguments.length>1){
+        elem.className=eleclass;
+    }
+    return elem;
 }
