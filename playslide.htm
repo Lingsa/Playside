@@ -8,7 +8,7 @@
 </head>
 <body>
 	<div class="move_wrap" id="moveWrap">
-		<ul class="move_con slideMain">
+		<ul class="slideMain move_init">
 			<li ><a href="#"><img src="image/dr01.jpg" alt=""></a></li>
 			<li><a href="#"><img src="image/dr02.jpg" alt=""></a></li>
 			<li><a href="#"><img src="image/dr03.jpg" alt=""></a></li>
@@ -25,7 +25,8 @@
 			var oPar=document.getElementById("moveWrap");
 			var trySlide=Playslide(oPar,{
 				slideTime:3000,
-				curSlide:1
+				curSlide:1,
+				slideType:"leftRight"
 			});
 
 			document.getElementById('next').onclick=function(){

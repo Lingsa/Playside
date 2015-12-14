@@ -14,59 +14,60 @@
         if(!(this instanceof Playslide)) return new Playslide(x,arglist);
         //quit if no root element
         if(!x) return;
-        var oParent=x, obj, objX, objY, objItem, args, reExp, pageItem, length;
-        obj=getElementsByClassName("slideMain",oParent)[0];
+        var oParent=x, slideWrap, objX, objY, objItem, args, reExp, pageItem, length;
+        slideWrap=getElementsByClassName("slideMain",oParent)[0];
 
         //活动屏幕尺寸
-        objX=obj.clientWidth;
-        objY=obj.clientHeight;
+        objX=slideWrap.clientWidth;
+        objY=slideWrap.clientHeight;
         args={
             initSlide:null,
-            curSlide:0,       //当前活动对象的索引
-            slideTime:4000,   //对象交接间隔的时间
-            speed:300,        //对象交接所用时间
-            continuous:true,  //对象自动交接
-            slideType:"" ,    //更换效果
-            showPage:true     //是否显示页码
+            curSlide:0,          //当前活动对象的索引
+            slideTime:4000,      //对象交接间隔的时间
+            speed:350,           //对象交接所用时间
+            continuous:true,     //对象自动交接
+            slideType:"init",    //更换效果
+            showPage:true        //是否显示页码
         };
 
         //当前对象特有的className正则表达式
-        reExp=new RegExp(/\bactive\b/gi);
-
-        /*更换效果
-        switch args["slideType"]{
-            case "lTr":
-                objItem.
-        }
-        */
-        //初始化默认滚动
-        function init(){ 
-            if(arguments.length>=2){
-                var argValid=arguments[1];
-                for(var validNum in argValid){
-                    if(args.hasOwnProperty(validNum)){
-                        args[validNum]=argValid[validNum];
-                    }
+        reExp=new RegExp(/(\s|^)active(\s|$)/gi);
+        if(arguments.length>=2){
+            var argValid=arguments[1];
+            for(var validNum in argValid){
+                if(args.hasOwnProperty(validNum)){
+                    args[validNum]=argValid[validNum];
                 }
-                argValid=null;
             }
-            //所有对象集合数组
+            argValid=null;
+        }        
+       
+        //初始化默认滚动
+        function init(){             
+
             //获取滚动图片的数量
             (function(exports){
-                var slideNode=obj.childNodes;
+                var slideNode=slideWrap.childNodes;
                 for(var i=0;i<slideNode.length;i++){
                     if(slideNode[i].nodeType===1){
                         exports.push(slideNode[i]);
                     }
                 }
             })(objItem=[]);
+            /*
+             *更换效果
+            */
+            var activeclass=slideWrap.className;
+            if(!(/(\s+)[a-zA-Z]$/g.test(args["slideType"]))){
+                slideWrap.className=activeclass.split(" ")[0]+" move_"+args["slideType"]; 
+            }
+
             length=objItem.length;
             if(length<2) args["showPage"]=false; 
 
             //所有对象索引按钮集合数组
-            pageItem=[objItem.length];
-            if(+args["showPage"]==1){               
-                pageItem=[objItem.length];               
+            pageItem=[length];
+            if(+args["showPage"]==1 ){                                           
                 var ulr=creatElement("ul","slideNav move_nav");           
                 for(var i=0;i<objItem.length;i++){
                     var lir=creatElement("li");
@@ -78,92 +79,112 @@
                     pageItem[i]=lir;
                 }
                 oParent.appendChild(ulr);
+                ulr="";
+                lir="";
+                li_child="";                
             }           
             var n=objItem.length;
             while(n--){
                 removeClass(objItem[n],reExp);
                 removeClass(pageItem[n],reExp);
-            }        
-            turnPage();
+            }                    
             objItem[args.curSlide].className+='active';
             pageItem[args.curSlide].className+='active';
+            switch (args["slideType"]){
+                case "leftRight":
+                    (function (){
+                        slideWrap.style.width=objItem.length*objX+"px";                        
+                        slideWrap.style.transform="translate(-"+args["curSlide"]*objX+"px,0)";
+                        slideWrap.style.transition="left "+args["speed"]+"ms ease-in 0";                                                    
+                    })();
+                    break;
+            }
             args["initSlide"]=setInterval(function(){
                 next();
             },args["slideTime"]);
-            obj.onmousemove=function(){
+            slideWrap.onmousemove=function(){
                 clearInterval(args["initSlide"]);
             }
-            obj.onmouseout=function(){
-                init();
+            slideWrap.onmouseout=function(){
+                args["initSlide"]=setInterval(function(){
+                    next();
+                },args["slideTime"]);
             }
+            turnPage();
         }
 
-        //向下翻页
+        //向后翻页
         function next(){
             //显示图片是尾部
             if(args["curSlide"]==objItem.length-1){
                 removeClass(objItem[args["curSlide"]],reExp);
-                args["curSlide"]=-1;
-                
+                args["curSlide"]=-1;                
                 objItem[++args["curSlide"]].className+='active';
-            }else if(args["curSlide"]<objItem.length-1 && args["curSlide"]>=0){
-                
+
+            }else if(args["curSlide"]<objItem.length-1 && args["curSlide"]>=0){                
                 removeClass(objItem[args["curSlide"]],reExp);
                 objItem[++args["curSlide"]].className+='active';
                 
-            }   
+            } 
+            slideVisual(args["curSlide"]);    
             lightPage();
         }
 
-        //向上翻页
+        //向前翻页
         function prev(){
             //显示图片是头部
             if(args["curSlide"]==0){
                 removeClass(objItem[args["curSlide"]],reExp);
-                args["curSlide"]=objItem.length;
-                
-                objItem[--args["curSlide"]].className+='active';
-                
-            }else if(args["curSlide"]<objItem.length && args["curSlide"]>0){
-                
+                args["curSlide"]=objItem.length;                
+                objItem[--args["curSlide"]].className+='active';                
+            }else if(args["curSlide"]<objItem.length && args["curSlide"]>0){                
                 removeClass(objItem[args["curSlide"]],reExp);
-                objItem[--args["curSlide"]].className+='active';
-                
+                objItem[--args["curSlide"]].className+='active';                
             }
+            slideVisual(args["curSlide"]); 
             lightPage();
         }
 
-        //点击页数翻页
+        //上下(或左右)翻页
         function turnPage(){
             if(+args["showPage"]==0) return;
-            for(var i=0;i<pageItem.length;i++){
-                
-                    (function(i){
-                        this.onclick=function(){
-                            if(i!=args["curSlide"]){
-                                removeClass(objItem[args["curSlide"]],reExp);
-                                removeClass(pageItem[args["curSlide"]],reExp);
-                                objItem[i].className+='active';
-
-                                args["curSlide"]=i;
-                                lightPage();
-                                clearInterval(args["initSlide"]);
-                            }
+            for(var i=0;i<pageItem.length;i++){                
+                (function(i){
+                    this.onclick=function(){
+                        if(i!=args["curSlide"]){
+                            clearInterval(args["initSlide"]);
+                            removeClass(objItem[args["curSlide"]],reExp);
+                            removeClass(pageItem[args["curSlide"]],reExp);
+                            objItem[i].className+='active';
+                            args["curSlide"]=i; 
+                            slideVisual(args["curSlide"]);                     
+                            lightPage();                            
                         }
-                    }).call(pageItem[i],i);
-                
+                    }
+                }).call(pageItem[i],i);                
             }
         }
         //当前页码标亮
         function lightPage(){
             for(var i=0;i<pageItem.length;i++){
-                if(/\bactive\b/.test(pageItem[i].className) && (args["curSlide"]!=i)){
-                    pageItem[i].className=pageItem[i].className.replace(/\bactive\b/,"");
+                if(reExp.test(pageItem[i].className) && (args["curSlide"]!=i)){
+                    pageItem[i].className=pageItem[i].className.replace(reExp,"");
                     break;
                 }
 
             }
             pageItem[args["curSlide"]].className+='active';
+        }
+        //翻页效果
+        function slideVisual(index){
+            switch (args["slideType"]){
+                case "leftRight":
+                    (function (){
+                        slideWrap.style.transform="translate(-"+index*objX+"px,0)";
+                        slideWrap.style.transition="all "+args["speed"]+"ms ease-in";                                                                    
+                    })();
+                    break;
+            }            
         }
         init();
         return{
@@ -194,42 +215,42 @@ if (typeof(module) !== 'undefined')
         return window.Playslide;
     });
 }
-    /*重写getElementsByClassName(className,root,tagName)
-     *使用方法getElementsByClassName()
-    */
-    function getElementsByClassName(className,root,tagName){
-        'use strict';
-        
-        if(root){
-            root=typeof root=="string"?document.getElementById(root):root;
-        }else{
-            root=document.body;
-        }
-        tagName=tagName||"*";
+/*重写getElementsByClassName(className,root,tagName)
+ *使用方法getElementsByClassName()
+*/
+function getElementsByClassName(className,root,tagName){
+    'use strict';
+    
+    if(root){
+        root=typeof root=="string"?document.getElementById(root):root;
+    }else{
+        root=document.body;
+    }
+    tagName=tagName||"*";
 
-        //如果浏览器支持getElementsByClassName，就直接的用                                    
-        if (document.getElementsByClassName){                    
-            return root.getElementsByClassName(className);
-        }else{ 
-            //获取指定元素
-            var tag=root.getElementsByTagName(tagName);    
-            //用于存储符合条件的元素
-            var tagAll=[]; 
+    //如果浏览器支持getElementsByClassName，就直接的用                                    
+    if (document.getElementsByClassName){                    
+        return root.getElementsByClassName(className);
+    }else{ 
+        //获取指定元素
+        var tag=root.getElementsByTagName(tagName);    
+        //用于存储符合条件的元素
+        var tagAll=[]; 
 
-            //遍历获得的元素                                   
-            for (var i=0;i<tag.length;i++) {                
+        //遍历获得的元素                                   
+        for (var i=0;i<tag.length;i++) {                
 
-                //遍历此元素中所有class的值，如果包含指定的类名，就赋值给tagnameAll
-                for(var j=0,n=tag[i].className.split(' ');j<n.length;j++){    
-                    if(n[j]==className){
-                        tagAll.push(tag[i]);
-                        break;
-                    }
+            //遍历此元素中所有class的值，如果包含指定的类名，就赋值给tagnameAll
+            for(var j=0,n=tag[i].className.split(' ');j<n.length;j++){    
+                if(n[j]==className){
+                    tagAll.push(tag[i]);
+                    break;
                 }
             }
-            return tagAll;
         }
+        return tagAll;
     }
+}
 
 //删去当前状态
 function removeClass(e,exp){
