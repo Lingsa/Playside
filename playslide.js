@@ -74,7 +74,8 @@
                     var li_child=creatElement("a","dot");
                     li_child.setAttribute("href","javascript:;");
                     li_child.innerHTML=i+1;
-                    lir.appendChild(li_child);                             
+                    lir.appendChild(li_child); 
+                    //lir.insertAdjacentHTML("beforeend",li_child);
                     ulr.appendChild(lir);
                     pageItem[i]=lir;
                 }
@@ -96,6 +97,17 @@
                         slideWrap.style.width=objItem.length*objX+"px";                        
                         slideWrap.style.transform="translate(-"+args["curSlide"]*objX+"px,0)";
                         slideWrap.style.transition="left "+args["speed"]+"ms ease-in 0";                                                    
+                    })();
+                    break;
+                case "topBottom":
+                    (function(){
+                        slideWrap.style.height=objItem.length*objY+"px";
+                        var container=creatElement("div","slideWrap");
+                        container.appendChild(slideWrap);
+                        oParent.insertAdjacentElement("afterbegin",container);
+                        slideWrap.style.transform="translateY(-"+args["curSlide"]*objY+"px)";
+                        slideWrap.style.transition="all "+args["speed"]+"ms ease-in";
+                        container="";
                     })();
                     break;
             }
@@ -182,6 +194,12 @@
                     (function (){
                         slideWrap.style.transform="translate(-"+index*objX+"px,0)";
                         slideWrap.style.transition="all "+args["speed"]+"ms ease-in";                                                                    
+                    })();
+                    break;
+                case "topBottom":
+                    (function(){
+                        slideWrap.style.transform="translateY(-"+index*objY+"px)";
+                        slideWrap.style.transition="all "+args["speed"]+"ms ease-in";
                     })();
                     break;
             }            

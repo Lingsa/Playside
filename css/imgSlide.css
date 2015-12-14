@@ -11,7 +11,7 @@ a:hover , a.active{ color:#69f;}
 }
 
 /*
- *活动区域class默认
+ *活动区域默认class
 */
 .slideMain {
 	position:relative;
@@ -79,13 +79,20 @@ a:hover , a.active{ color:#69f;}
 /*
  *活动区域-效果：左右滑动
 */
-
 .move_leftRight li {
     float:left;
     width:500px;
 }
-
-
+/*
+ *活动区域-效果：左右滑动
+*/
+.slideWrap {
+	height:350px;
+	overflow:hidden;
+}
+.move_topBottom li {
+    height:350px;
+}
 .move_leftRight:after,
 .move_leftRight:before {
 	display: table; content: "";line-height:0;
