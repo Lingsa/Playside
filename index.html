@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=devide-width,initial-scale=1">
+	<title>跑马灯效果--练习</title>
+	<link rel="stylesheet" href="css/imgSlide.css">
+</head>
+<body>
+	<div class="move_wrap" id="moveWrap">
+		<ul class="slideMain move_init">
+			<li ><a href="#"><img src="image/dr01.jpg" alt=""></a></li>
+			<li><a href="#"><img src="image/dr02.jpg" alt=""></a></li>
+			<li><a href="#"><img src="image/dr03.jpg" alt=""></a></li>
+		</ul>
+		<div class="updown">
+			<a href="javascript:;" id="next">下一页</a>
+			<a href="javascript:;" id="prev">上一页</a>
+		</div>
+	</div>
+	<script src="build/cycleList-foot.js"></script>
+	<script src="build/playslide.opt.js"></script>
+	<script >
+		window.onload=function(){
+			//整个幻灯片效果呈现框架ID
+			var oPar=document.getElementById("moveWrap");
+			var trySlide=Playslide(oPar,{
+				slideTime:3000,
+				curSlide:1,
+				slideType:"leftRight"
+			});
+
+			document.getElementById('next').onclick=function(){
+				trySlide.nextPage();
+			}
+			document.getElementById('prev').onclick=function(){
+				trySlide.prevPage();
+			}
+
+		}
+		
+	</script>
+</body>
+</html>
