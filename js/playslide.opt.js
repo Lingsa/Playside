@@ -1,11 +1,11 @@
 /*
- *图片滚动效果
- *html结构：
- *div#some>div.slideMain
+ *利用双向链表的图片滚动效果
+ *html结构：div#some>div.slideMain
+ *
  *使用方法：
  //var oPar=document.getElementById("moveWrap");
  //Playslide(oPar,{
-	 //slideTime:4500
+     //slideTime:4500
  //});
 */
 ;(function () {
@@ -14,7 +14,7 @@
         if(!(this instanceof Playslide)) return new Playslide(x,arglist);
         //quit if no root element
         if(!x) return;
-        var oParent=x, slideWrap, objX, objY, objItem, args, reExp, pageItem, length;
+        var oParent=x, slideWrap, objX, objY, args, reExp, pageItem, length;
         slideWrap=getElementsByClassName("slideMain",oParent)[0];
 
         //活动屏幕尺寸
@@ -44,16 +44,28 @@
        
         //初始化默认滚动
         function init(){             
-
+            var objItem,
+                itemList=new LList();
             //获取滚动图片的数量
-            (function(exports){
-                var slideNode=slideWrap.childNodes;
-                for(var i=0;i<slideNode.length;i++){
-                    if(slideNode[i].nodeType===1){
-                        exports.push(slideNode[i]);
-                    }
+            (function(){                
+                if(slideWrap.children){
+                    objItem=slideWrap.children;
+                }else{
+                    var slideNode=slideWrap.childNodes,
+                        k=0;
+                    for(var i=0;i<slideNode.length;i++){
+                        if(slideNode[i].nodeType===1){
+                            objItem[k]=slideNode[i];
+                            k++;
+                        }
+                    }                    
                 }
-            })(objItem=[]);
+
+                for(var i=0;i<objItem.length;i++) {
+                    itemList.insert(objItem[i]);
+                }
+                return objItem;
+            })();
             /*
              *更换效果
             */
@@ -89,8 +101,8 @@
                 removeClass(objItem[n],reExp);
                 removeClass(pageItem[n],reExp);
             }                    
-            objItem[args.curSlide].className+='active';
-            pageItem[args.curSlide].className+='active';
+            objItem[args.curSlide].className+=' active';
+            pageItem[args.curSlide].className+=' active';
             switch (args["slideType"]){
                 case "leftRight":
                     (function (){
@@ -270,12 +282,28 @@ function getElementsByClassName(className,root,tagName){
     }
 }
 
-//删去当前状态
-function removeClass(e,exp){
-  if(e.className){
-    var stre=e.className.toString();
-    e.className=stre.replace(exp,"");
-  }
+//删去当前状态 [正则表达式]
+// function removeClass(e,exp){
+//   if(e.className){
+//     var stre=e.className.toString();
+//     e.className=stre.replace(exp,"");
+//   }
+// }
+/*
+ *删除类名的另一种方式
+*/
+function removeClass(e,express) {
+    if(e.className) {
+        var classnames=e.className.split(/\s+/),
+            i;
+        for(i=0;i<classnames.length;i++) {
+            if(classnames[i]==express) {
+                break;
+            }
+        }
+        classnames.splice(i,1);
+        e.className=classnames.join(" ");
+    }
 }
 function creatElement(eletype,eleclass){
     var elem=document.createElement(eletype);

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>利用双向循环链表做跑马灯</title>
+    <link rel="stylesheet" href="css/imgSlide.css">
+</head>
+<body>
+    <div class="move_wrap" id="moveWrap">
+        <ul class="slideMain move_leftRight">
+            <li ><a href="#"><img src="image/dr01.jpg" alt=""></a></li>
+            <li><a href="#"><img src="image/dr02.jpg" alt=""></a></li>
+            <li><a href="#"><img src="image/dr03.jpg" alt=""></a></li>
+        </ul>
+        <div class="updown">
+            <a href="javascript:;" id="next">下一页</a>
+            <a href="javascript:;" id="prev">上一页</a>
+        </div>
+    </div>
+    <script src="build/cycleList-foot.js"></script>
+    <script>
+        var next=document.getElementById("next");
+        next.onclick=function() {
+            console.log("next:");
+            nextPage();
+        }
+        var itemList=new LList(),
+            itemList_opt,
+            slideMain=document.querySelector(".slideMain"),
+            winWidth=slideMain.clientWidth;
+
+        (function(){
+            if(slideMain.children) {                
+                itemList_opt=slideMain.children;
+                console.log("children:"+itemList_opt.length);
+            }else { 
+                
+                var childList=slideMain.childNodes,
+                    k;
+                for(var i=0;i<childList.length;i++) {
+                    if(childList[i].nodeType===1) {
+                        itemList_opt[k]=childList[i];
+                        k++;
+                    }
+                }
+                console.log("childNodes:"+itemList_opt.length);
+            } 
+        })();
+
+        (function(){
+            for(var i=0;i<itemList_opt.length;i++) {
+                if(i===0) {
+                    itemList.insert(itemList_opt[i],"head");
+                }else {
+                   itemList.insert(itemList_opt[i],itemList_opt[i-1]); 
+                }
+            }
+        })();
+       // console.log("链表："+itemList.length());
+       itemList.pointer=0;
+       slideMain.style.width=itemList_opt.length*winWidth+'px';
+       /*
+        *开始行为
+       */
+        function nextPage() {
+            //
+            
+            itemList.advance(1);            
+            var pointer=+itemList.pointer,
+                curnode=itemList.show();
+            //curnode.element
+
+            slideMain.style.transform='translate3D(-'+Math.abs(pointer)*winWidth+'px,0,0)';
+            slideMain.style.transition='all 450ms ease-in';
+
+            console.log(curnode+"-->pointer2:"+pointer+"-->this.pointer2:"+itemList.pointer);
+        }
+    </script>
+</body>
+</html>

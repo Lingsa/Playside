@@ -1,0 +1,16 @@
+appenChild:
+1000个li节点
+appendChild:: 6.589ms     removeChild:: 18.272ms
+appendChild:: 6.251ms     removeChild:: 36.861ms
+appendChild:: 6.073ms
+appendChild:: 6.287ms
+
+insertAdacentElement:
+1000个li节点
+insertAdjacentelement:: 7.484ms
+insertAdjacentelement:: 8.110ms
+insertAdjacentelement:: 7.824ms
+insertAdjacentelement:: 7.968ms17:02 2015/12/14
+insertAdjacentelement:: 7.053ms
+insertAdjacentelement:: 7.269ms
+insertAdjacentelement:: 7.062ms

@@ -18,7 +18,8 @@
 			<a href="javascript:;" id="prev">上一页</a>
 		</div>
 	</div>
-	<script src="playslide.js"></script>
+	<script src="build/cycleList-foot.js"></script>
+	<script src="build/playslide.opt.js"></script>
 	<script >
 		window.onload=function(){
 			//整个幻灯片效果呈现框架ID
@@ -26,7 +27,7 @@
 			var trySlide=Playslide(oPar,{
 				slideTime:3000,
 				curSlide:1,
-				slideType:"topBottom"
+				slideType:"leftRight"
 			});
 
 			document.getElementById('next').onclick=function(){
